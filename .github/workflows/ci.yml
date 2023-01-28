@@ -11,7 +11,7 @@ on:
 
 jobs:
 
-  Test:
+  test:
     runs-on: ubuntu-latest
 
     # Service containers to run with `container-job`
@@ -40,8 +40,8 @@ jobs:
       with:
         go-version: 1.19
 
-  - name: Run migration
-    run: make migrateup
+    - name: Run migration
+      run: make migrateup
 
     - name: Test
       run: go test -v ./...
