@@ -18,4 +18,7 @@ maintest:
 test:
 	go test -v -cover ./...
 
-.PHONY: createdb dropdb migrateup migratedown sqlc maintest test
+server:
+	go run main.go
+
+.PHONY: createdb dropdb migrateup migratedown sqlc maintest test server
