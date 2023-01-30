@@ -6,21 +6,26 @@ import (
 	"fmt"
 )
 
+type Store interface {
+	Querier
+	TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error)
+}
+
 // Store provides all functions to execute db queries and transactions
-type Store struct {
+type SQLStore struct {
 	*Queries // extend struct functionality instead of inheritance
 	db       *sql.DB
 }
 
-func NewStore(db *sql.DB) *Store {
-	return &Store{
+func NewStore(db *sql.DB) Store {
+	return &SQLStore{
 		db:      db,
 		Queries: New(db), // New function creates and returns new Queries object
 	}
 }
 
 // execTx executes a function within a database transaction
-func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
+func (store *SQLStore) execTx(ctx context.Context, fn func(*Queries) error) error {
 	tx, err := store.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
@@ -55,36 +60,36 @@ type TransferTxResult struct {
 }
 
 func AddMoney(
-	ctx context.Context, 
-	q *Queries, fromAccountID, 
+	ctx context.Context,
+	q *Queries, fromAccountID,
 	amountFromAccount, toAccountID, amountToAccount int64,
-	)(fromAccount, toAccount Account, err error){
-		fromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-			ID:     fromAccountID,
-			Amount: amountFromAccount,
-		})
-		if err != nil {
-			return
-		}
+) (fromAccount, toAccount Account, err error) {
+	fromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+		ID:     fromAccountID,
+		Amount: amountFromAccount,
+	})
+	if err != nil {
+		return
+	}
 
-		toAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-			ID:     toAccountID,
-			Amount: amountToAccount,
-		})
-		if err != nil {
-			return
-		}
+	toAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+		ID:     toAccountID,
+		Amount: amountToAccount,
+	})
+	if err != nil {
+		return
+	}
 	return
 }
 
 // TransferTx performs a money transfer from one account to the other
 // It creates a transfer record, add account entries, and update account's balance within a single database transaction
-func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
+func (store *SQLStore) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
 	var result TransferTxResult
 
 	err := store.execTx(ctx, func(q *Queries) error {
 		var err error
-		result.Transfer, err = q.CreateTransfer(ctx, CreateTransferParams {
+		result.Transfer, err = q.CreateTransfer(ctx, CreateTransferParams{
 			FromAccountID: arg.FromAccountID,
 			ToAccountID:   arg.ToAccountID,
 			Amount:        arg.Amount,
