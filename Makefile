@@ -8,6 +8,11 @@ migrateup:
 migratedown:
 	migrate -path db/migration -database "postgres://postgres:postgrespw@localhost:49153/simple_bank?sslmode=disable" -verbose down
 
+migrateuplast:
+	migrate -path db/migration -database "postgres://postgres:postgrespw@localhost:49153/simple_bank?sslmode=disable" -verbose up 1
+migratedownlast:
+	migrate -path db/migration -database "postgres://postgres:postgrespw@localhost:49153/simple_bank?sslmode=disable" -verbose down 1
+
 makeFileDir := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 sqlc:
 	docker run --rm -v $(makeFileDir):/src -w /src kjconroy/sqlc generate
@@ -24,4 +29,4 @@ server:
 mock:
 	mockgen -package mockdb -destination db/mock/store.go github.com/techschool/simplebank/db/sqlc Store
 
-.PHONY: createdb dropdb migrateup migratedown sqlc maintest test server mock
+.PHONY: createdb dropdb migrateup migratedown sqlc maintest test server mock migrateuplast migratedownlast
