@@ -1,3 +1,6 @@
+postgres:
+	docker run --name postgres-ohKj -p 49153:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgrespw -d postgres:latest
+
 createdb:
 	docker exec -it postgres-ohKj psql -U postgres -d postgres -c "CREATE DATABASE simple_bank;"
 dropdb:
@@ -29,4 +32,4 @@ server:
 mock:
 	mockgen -package mockdb -destination db/mock/store.go github.com/techschool/simplebank/db/sqlc Store
 
-.PHONY: createdb dropdb migrateup migratedown sqlc maintest test server mock migrateuplast migratedownlast
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc maintest test server mock migrateuplast migratedownlast
