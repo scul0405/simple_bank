@@ -63,3 +63,8 @@ func TestInvalidJWTAlgNone(t *testing.T){
 	require.EqualError(t, err, ErrInvalidToken.Error())
 	require.Nil(t, payload)
 }
+
+func TestJWTInvalidKeySize(t *testing.T) {
+	_, err := NewJWTMaker(util.RandomString(30))
+	require.Error(t, err)
+}

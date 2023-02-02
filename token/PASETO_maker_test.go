@@ -44,3 +44,8 @@ func TestExpiredPASETO(t *testing.T) {
 	require.EqualError(t, err, ErrExpiredToken.Error())
 	require.Nil(t, payload)
 }
+
+func TestPASETOInvalidKeySize(t *testing.T) {
+	_, err := NewPASETOMaker(util.RandomString(30))
+	require.Error(t, err)
+}
