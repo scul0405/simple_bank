@@ -30,7 +30,7 @@ func (maker *JWTMaker) CreateToken(username string, duration time.Duration) (str
 		return "", err
 	}
 
-	JWTToken := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
+	JWTToken := jwt.NewWithClaims(jwt.SigningMethodHS256, payload) // jwt claim payload to convert to second segment in JWT
 
 	return JWTToken.SignedString([]byte(maker.secretKey))
 }
