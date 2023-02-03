@@ -202,26 +202,30 @@ func TestCreateUser(t *testing.T) {
 	}
 
 	for i := range testCases {
-		ctrl := gomock.NewController(t)
-		defer ctrl.Finish()
+		tc := testCases[i]
 
-		store := mockdb.NewMockStore(ctrl)
-		testCases[i].buildStub(store)
-
-		server := newTestServer(t, store)
-		recorder := httptest.NewRecorder()
-
-		// Marshal body data to JSON
-		data, err := json.Marshal(testCases[i].body)
-		require.NoError(t, err)
-
-		url := "/users"
-		request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(data))
-		require.NoError(t, err)
-
-		server.router.ServeHTTP(recorder, request)
-
-		testCases[i].checkResponse(t, recorder)
+		t.Run(tc.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+	
+			store := mockdb.NewMockStore(ctrl)
+			tc.buildStub(store)
+	
+			server := newTestServer(t, store)
+			recorder := httptest.NewRecorder()
+	
+			// Marshal body data to JSON
+			data, err := json.Marshal(tc.body)
+			require.NoError(t, err)
+	
+			url := "/users"
+			request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(data))
+			require.NoError(t, err)
+	
+			server.router.ServeHTTP(recorder, request)
+	
+			tc.checkResponse(t, recorder)
+		})
 	}
 }
 
