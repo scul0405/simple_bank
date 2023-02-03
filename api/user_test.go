@@ -57,7 +57,7 @@ func EqCreateUserParams(arg db.CreateUserParams, password string) gomock.Matcher
 func TestCreateUser(t *testing.T) {
 	user, password := randomUser(t)
 
-	testcases := []struct {
+	testCases := []struct {
 		name          string
 		body          gin.H
 		buildStub     func(store *mockdb.MockStore)
@@ -142,7 +142,7 @@ func TestCreateUser(t *testing.T) {
 		{
 			name: "InvalidUsername",
 			body: gin.H{
-				"username": "invalid-username-!@##$",
+				"username":  "invalid-username-!@##$",
 				"password":  password,
 				"full_name": user.FullName,
 				"email":     user.Email,
@@ -157,7 +157,7 @@ func TestCreateUser(t *testing.T) {
 		{
 			name: "InvalidEmail",
 			body: gin.H{
-				"username": user.Username,
+				"username":  user.Username,
 				"password":  password,
 				"full_name": user.FullName,
 				"email":     "invalid-email-#@$",
@@ -172,7 +172,7 @@ func TestCreateUser(t *testing.T) {
 		{
 			name: "TooShortPassword",
 			body: gin.H{
-				"username": user.Username,
+				"username":  user.Username,
 				"password":  "123",
 				"full_name": user.FullName,
 				"email":     user.Email,
@@ -187,7 +187,7 @@ func TestCreateUser(t *testing.T) {
 		{
 			name: "BcryptErrorPasswordTooLong",
 			body: gin.H{
-				"username": user.Username,
+				"username":  user.Username,
 				"password":  "InSaFK0rffcT8Fd5zJSed09IA8kKQQ2LxEpNWfoqpOPbrUKum3ly3zPOeqdcF24H5K3SmgXzjlDf4IRb",
 				"full_name": user.FullName,
 				"email":     user.Email,
@@ -201,18 +201,18 @@ func TestCreateUser(t *testing.T) {
 		},
 	}
 
-	for i := range testcases {
+	for i := range testCases {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
 		store := mockdb.NewMockStore(ctrl)
-		testcases[i].buildStub(store)
+		testCases[i].buildStub(store)
 
 		server := newTestServer(t, store)
 		recorder := httptest.NewRecorder()
 
 		// Marshal body data to JSON
-		data, err := json.Marshal(testcases[i].body)
+		data, err := json.Marshal(testCases[i].body)
 		require.NoError(t, err)
 
 		url := "/users"
@@ -221,7 +221,7 @@ func TestCreateUser(t *testing.T) {
 
 		server.router.ServeHTTP(recorder, request)
 
-		testcases[i].checkResponse(t, recorder)
+		testCases[i].checkResponse(t, recorder)
 	}
 }
 

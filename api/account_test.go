@@ -20,7 +20,7 @@ import (
 func TestGetAccountAPI(t *testing.T) {
 	account := randomAccount()
 
-	testcases := []struct {
+	testCases := []struct {
 		name          string
 		accountID     int64
 		buildStub     func(store *mockdb.MockStore)
@@ -77,25 +77,25 @@ func TestGetAccountAPI(t *testing.T) {
 		},
 	}
 
-	for i := range testcases {
+	for i := range testCases {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
 		store := mockdb.NewMockStore(ctrl)
-		testcases[i].buildStub(store)
+		testCases[i].buildStub(store)
 
 		// start test server and request
 		server := newTestServer(t, store)
 		recorder := httptest.NewRecorder()
 
-		url := fmt.Sprintf("/accounts/%d", testcases[i].accountID)
+		url := fmt.Sprintf("/accounts/%d", testCases[i].accountID)
 		request, err := http.NewRequest(http.MethodGet, url, nil)
 		require.NoError(t, err)
 
 		// Send our API through the server router and record its response in the recorder
 		server.router.ServeHTTP(recorder, request)
 
-		testcases[i].checkResponse(t, recorder)
+		testCases[i].checkResponse(t, recorder)
 	}
 }
 
