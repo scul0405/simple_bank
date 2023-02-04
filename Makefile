@@ -1,10 +1,10 @@
 postgres:
-	docker run --name postgres-ohKj -p 49153:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgrespw -d postgres:latest
+	docker run --name postgres -p 49153:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgrespw -d postgres:latest
 
 createdb:
-	docker exec -it postgres-ohKj psql -U postgres -d postgres -c "CREATE DATABASE simple_bank;"
+	docker exec -it postgres psql -U postgres -d postgres -c "CREATE DATABASE simple_bank;"
 dropdb:
-	docker exec -it postgres-ohKj psql -U postgres -d postgres -c "DROP DATABASE simple_bank;"
+	docker exec -it postgres psql -U postgres -d postgres -c "DROP DATABASE simple_bank;"
 
 migrateup:
 	migrate -path db/migration -database "postgres://postgres:postgrespw@localhost:49153/simple_bank?sslmode=disable" -verbose up
