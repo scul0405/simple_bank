@@ -7,10 +7,9 @@ on:
   push:
     branches: ["main"]
 
-
 permissions:
-  id-token: write
-  contents: read
+    id-token: write
+    contents: read
 
 jobs:
   build:
@@ -24,7 +23,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::415154130006:user/github-ci
+          role-to-assume: arn:aws:iam::415154130006:role/github-actions-role
           aws-region: us-east-1
 
       - name: Login to Amazon ECR Private
