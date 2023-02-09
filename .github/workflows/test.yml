@@ -25,7 +25,7 @@ jobs:
           POSTGRES_PASSWORD: postgrespw
           POSTGRES_DB: simple_bank
         ports:
-          - 5432:5432
+          - 5678:5432
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
