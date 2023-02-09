@@ -13,10 +13,10 @@ import (
 
 // Server serves HTTP requests for our banking service
 type Server struct {
-	store db.Store
-	config util.Config
+	store      db.Store
+	config     util.Config
 	tokenMaker token.Maker
-	router *gin.Engine 
+	router     *gin.Engine
 }
 
 // NewServer creates a new HTTP server and setup routing
@@ -27,8 +27,8 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 	}
 
 	server := &Server{
-		config: config,
-		store: store,
+		config:     config,
+		store:      store,
 		tokenMaker: tokenMaker,
 	}
 
@@ -41,11 +41,13 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 	return server, nil
 }
 
-func (server *Server) SetupRouter(){
+func (server *Server) SetupRouter() {
 	router := gin.Default()
 
 	router.POST("/users", server.CreateUser)
-	router.POST("users/login", server.LoginUser)
+	router.POST("/users/login", server.LoginUser)
+
+	router.POST("/tokens/renew_access", server.RenewAccessToken)
 
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
 
