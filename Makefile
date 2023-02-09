@@ -1,3 +1,5 @@
+DB_URL=postgres://postgres:postgrespw@localhost:5678/simple_bank?sslmode=disable
+
 postgres:
 	docker run --name postgres -p 5678:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgrespw -d postgres:latest
 
@@ -7,14 +9,14 @@ dropdb:
 	docker exec -it postgres psql -U postgres -d postgres -c "DROP DATABASE simple_bank;"
 
 migrateup:
-	migrate -path db/migration -database "postgres://postgres:postgrespw@localhost:5678/simple_bank?sslmode=disable" -verbose up
+	migrate -path db/migration -database "${DB_URL}" -verbose up
 migratedown:
-	migrate -path db/migration -database "postgres://postgres:postgrespw@localhost:5678/simple_bank?sslmode=disable" -verbose down
+	migrate -path db/migration -database "${DB_URL}" -verbose down
 
 migrateuplast:
-	migrate -path db/migration -database "postgres://postgres:postgrespw@localhost:5678/simple_bank?sslmode=disable" -verbose up 1
+	migrate -path db/migration -database "${DB_URL}" -verbose up 1
 migratedownlast:
-	migrate -path db/migration -database "postgres://postgres:postgrespw@localhost:5678/simple_bank?sslmode=disable" -verbose down 1
+	migrate -path db/migration -database "${DB_URL}" -verbose down 1
 
 makeFileDir := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 sqlc:
@@ -32,4 +34,9 @@ server:
 mock:
 	mockgen -package mockdb -destination db/mock/store.go github.com/techschool/simplebank/db/sqlc Store
 
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc maintest test server mock migrateuplast migratedownlast
+db_docs:
+	dbdocs build ./doc/db.dbml
+db_schema:
+	dbml2sql ./doc/db.dbml --postgres -o ./doc/schema.sql
+
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc maintest test server mock migrateuplast migratedownlast db_docs db_schema
