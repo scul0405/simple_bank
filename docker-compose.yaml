@@ -13,7 +13,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DB_SOURCE=postgres://postgres:postgrespw@postgres:5432/simple_bank?sslmode=disable
+      - DB_SOURCE=postgres://postgres:postgrespw@postgres:5678/simple_bank?sslmode=disable
     depends_on:
       - postgres
     entrypoint: [ "/app/wait-for.sh", "postgres:5432", "--", "/app/start.sh" ]
