@@ -39,4 +39,10 @@ db_docs:
 db_schema:
 	dbml2sql ./doc/db.dbml --postgres -o ./doc/schema.sql
 
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc maintest test server mock migrateuplast migratedownlast db_docs db_schema
+proto:
+	
+	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
+    --go-grpc_out=pb --go-grpc_opt=paths=source_relative \
+    proto/*.proto
+
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc maintest test server mock migrateuplast migratedownlast db_docs db_schema proto
