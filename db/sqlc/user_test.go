@@ -18,7 +18,7 @@ func createRandomUser(t *testing.T) User{
 	arg := CreateUserParams {
 		Username: util.RandomOwner(),
 		HashedPassword: hashedPassword,
-		FullName: util.RandomCurrency(),
+		FullName: util.RandomOwner(),
 		Email: util.RandomEmail(),
 	}
 
