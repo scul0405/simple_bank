@@ -6,8 +6,21 @@ import "rpc_create_user.proto";
 import "rpc_login_user.proto";
 
 import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package="github.com/techschool/simplebank/pb";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "Simple Bank";
+    version: "1.0";
+    contact: {
+      name: "Duy Truong";
+      url: "https://github.com/scul0405";
+      email: "vldtruong1221@gmail.com";
+    };
+ };
+};
 
 service Simplebank{
     rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
