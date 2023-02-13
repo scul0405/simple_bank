@@ -7,13 +7,13 @@ import (
 	"testing"
 
 	_ "github.com/lib/pq"
-	"github.com/techschool/simplebank/util"
+	"github.com/scul0405/simple_bank/util"
 )
 
 var testQueries *Queries
 var testDB *sql.DB
 
-func TestMain(m *testing.M){
+func TestMain(m *testing.M) {
 	config, err := util.LoadConfig("../..") // location of app.env file
 	if err != nil {
 		log.Fatal("Cannot load configuration: ", err)

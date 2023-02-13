@@ -7,15 +7,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
+	db "github.com/scul0405/simple_bank/db/sqlc"
+	"github.com/scul0405/simple_bank/util"
 	"github.com/stretchr/testify/require"
-	db "github.com/techschool/simplebank/db/sqlc"
-	"github.com/techschool/simplebank/util"
 )
 
-func newTestServer(t *testing.T, store db.Store) *Server{
+func newTestServer(t *testing.T, store db.Store) *Server {
 	config := util.Config{
-		TokenSymmetricKey: util.RandomString(32),
-		AccessTokenDuration:       time.Minute,
+		TokenSymmetricKey:   util.RandomString(32),
+		AccessTokenDuration: time.Minute,
 	}
 
 	server, err := NewServer(config, store)

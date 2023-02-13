@@ -14,10 +14,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/lib/pq"
+	mockdb "github.com/scul0405/simple_bank/db/mock"
+	db "github.com/scul0405/simple_bank/db/sqlc"
+	"github.com/scul0405/simple_bank/util"
 	"github.com/stretchr/testify/require"
-	mockdb "github.com/techschool/simplebank/db/mock"
-	db "github.com/techschool/simplebank/db/sqlc"
-	"github.com/techschool/simplebank/util"
 )
 
 /*
@@ -207,42 +207,42 @@ func TestCreateUser(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
-	
+
 			store := mockdb.NewMockStore(ctrl)
 			tc.buildStub(store)
-	
+
 			server := newTestServer(t, store)
 			recorder := httptest.NewRecorder()
-	
+
 			// Marshal body data to JSON
 			data, err := json.Marshal(tc.body)
 			require.NoError(t, err)
-	
+
 			url := "/users"
 			request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(data))
 			require.NoError(t, err)
-	
+
 			server.router.ServeHTTP(recorder, request)
-	
+
 			tc.checkResponse(t, recorder)
 		})
 	}
 }
 
-func TestLoginUser(t* testing.T){
+func TestLoginUser(t *testing.T) {
 	user, password := randomUser(t)
 
-	testCases := []struct{
-		name string
-		body gin.H
-		buildStub func(t *testing.T, store *mockdb.MockStore)
+	testCases := []struct {
+		name          string
+		body          gin.H
+		buildStub     func(t *testing.T, store *mockdb.MockStore)
 		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
 	}{
 		{
-			name : "OK",
+			name: "OK",
 			body: gin.H{
-				"username" : user.Username,
-				"password" : password,
+				"username": user.Username,
+				"password": password,
 			},
 			buildStub: func(t *testing.T, store *mockdb.MockStore) {
 				store.EXPECT().GetUser(gomock.Any(), gomock.Eq(user.Username)).Times(1).Return(user, nil)
@@ -253,7 +253,7 @@ func TestLoginUser(t* testing.T){
 			},
 		},
 		{
-			name : "BadRequest",
+			name: "BadRequest",
 			body: gin.H{},
 			buildStub: func(t *testing.T, store *mockdb.MockStore) {
 				store.EXPECT().GetUser(gomock.Any(), gomock.Any()).Times(0)
@@ -263,10 +263,10 @@ func TestLoginUser(t* testing.T){
 			},
 		},
 		{
-			name : "UserNotFound",
+			name: "UserNotFound",
 			body: gin.H{
-				"username" : "notFound",
-				"password" : password,
+				"username": "notFound",
+				"password": password,
 			},
 			buildStub: func(t *testing.T, store *mockdb.MockStore) {
 				store.EXPECT().GetUser(gomock.Any(), gomock.Any()).Times(1).Return(db.User{}, sql.ErrNoRows)
@@ -276,10 +276,10 @@ func TestLoginUser(t* testing.T){
 			},
 		},
 		{
-			name : "IncorrectPassword",
+			name: "IncorrectPassword",
 			body: gin.H{
-				"username" : user.Username,
-				"password" : "incorrect",
+				"username": user.Username,
+				"password": "incorrect",
 			},
 			buildStub: func(t *testing.T, store *mockdb.MockStore) {
 				store.EXPECT().GetUser(gomock.Any(), gomock.Eq(user.Username)).Times(1).Return(user, nil)
@@ -289,10 +289,10 @@ func TestLoginUser(t* testing.T){
 			},
 		},
 		{
-			name : "InternalError",
+			name: "InternalError",
 			body: gin.H{
-				"username" : user.Username,
-				"password" : password,
+				"username": user.Username,
+				"password": password,
 			},
 			buildStub: func(t *testing.T, store *mockdb.MockStore) {
 				store.EXPECT().GetUser(gomock.Any(), gomock.Any()).Times(1).Return(db.User{}, sql.ErrConnDone)

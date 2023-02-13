@@ -1,4 +1,4 @@
-module github.com/techschool/simplebank
+module github.com/scul0405/simple_bank
 
 go 1.19
 

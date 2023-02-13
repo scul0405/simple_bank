@@ -7,18 +7,18 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	db "github.com/techschool/simplebank/db/sqlc"
-	"github.com/techschool/simplebank/token"
+	db "github.com/scul0405/simple_bank/db/sqlc"
+	"github.com/scul0405/simple_bank/token"
 )
 
 type CreateTransferRequest struct {
-	FromAccountID int64 `json:"from_account_id" binding:"required"`
-	ToAccountID int64 `json:"to_account_id" binding:"required"`
-	Amount int64 `json:"amount" binding:"required,gt=0"`
-	Currency string `json:"currency" binding:"required,currency"`
+	FromAccountID int64  `json:"from_account_id" binding:"required"`
+	ToAccountID   int64  `json:"to_account_id" binding:"required"`
+	Amount        int64  `json:"amount" binding:"required,gt=0"`
+	Currency      string `json:"currency" binding:"required,currency"`
 }
 
-func (server *Server) CreateTransfer(ctx *gin.Context){
+func (server *Server) CreateTransfer(ctx *gin.Context) {
 	var req CreateTransferRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -27,13 +27,13 @@ func (server *Server) CreateTransfer(ctx *gin.Context){
 
 	arg := db.TransferTxParams{
 		FromAccountID: req.FromAccountID,
-		ToAccountID: req.ToAccountID,
-		Amount: req.Amount,	
+		ToAccountID:   req.ToAccountID,
+		Amount:        req.Amount,
 	}
 
 	fromAccount, valid := server.IsValidAccount(ctx, req.FromAccountID, req.Currency)
 
-	if !valid{
+	if !valid {
 		return
 	}
 
@@ -45,7 +45,7 @@ func (server *Server) CreateTransfer(ctx *gin.Context){
 	}
 
 	_, valid = server.IsValidAccount(ctx, req.ToAccountID, req.Currency)
-	if !valid{
+	if !valid {
 		return
 	}
 

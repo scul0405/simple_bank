@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/scul0405/simple_bank/util"
 	"github.com/stretchr/testify/require"
-	"github.com/techschool/simplebank/util"
 )
 
 func TestJWTMaker(t *testing.T) {
@@ -48,7 +48,7 @@ func TestExpiredJWT(t *testing.T) {
 	require.Nil(t, payload)
 }
 
-func TestInvalidJWTAlgNone(t *testing.T){
+func TestInvalidJWTAlgNone(t *testing.T) {
 	payload, err := NewPayload(util.RandomOwner(), time.Minute)
 	require.NoError(t, err)
 	require.NotEmpty(t, payload)

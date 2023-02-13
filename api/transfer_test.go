@@ -11,11 +11,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
+	mockdb "github.com/scul0405/simple_bank/db/mock"
+	db "github.com/scul0405/simple_bank/db/sqlc"
+	"github.com/scul0405/simple_bank/token"
+	"github.com/scul0405/simple_bank/util"
 	"github.com/stretchr/testify/require"
-	mockdb "github.com/techschool/simplebank/db/mock"
-	db "github.com/techschool/simplebank/db/sqlc"
-	"github.com/techschool/simplebank/token"
-	"github.com/techschool/simplebank/util"
 )
 
 func TestCreateTransfer(t *testing.T) {
@@ -42,7 +42,7 @@ func TestCreateTransfer(t *testing.T) {
 				"from_account_id": account1.ID,
 				"to_account_id":   account2.ID,
 				"amount":          amount,
-				"currency": account1.Currency,
+				"currency":        account1.Currency,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user1.Username, time.Minute)
@@ -53,10 +53,10 @@ func TestCreateTransfer(t *testing.T) {
 
 				arg := db.TransferTxParams{
 					FromAccountID: account1.ID,
-					ToAccountID: account2.ID,
-					Amount: 10,
+					ToAccountID:   account2.ID,
+					Amount:        10,
 				}
-				
+
 				store.EXPECT().TransferTx(gomock.Any(), gomock.Eq(arg)).Times(1)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -69,7 +69,7 @@ func TestCreateTransfer(t *testing.T) {
 				"from_account_id": account1.ID,
 				"to_account_id":   account2.ID,
 				"amount":          amount,
-				"currency": account1.Currency,
+				"currency":        account1.Currency,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 			},
@@ -88,7 +88,7 @@ func TestCreateTransfer(t *testing.T) {
 				"from_account_id": account1.ID,
 				"to_account_id":   account2.ID,
 				"amount":          amount,
-				"currency": account1.Currency,
+				"currency":        account1.Currency,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user2.Username, time.Minute)
@@ -127,7 +127,7 @@ func TestCreateTransfer(t *testing.T) {
 				"from_account_id": account1.ID,
 				"to_account_id":   account2.ID,
 				"amount":          amount,
-				"currency": "INVALID",
+				"currency":        "INVALID",
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user1.Username, time.Minute)
@@ -147,7 +147,7 @@ func TestCreateTransfer(t *testing.T) {
 				"from_account_id": account1.ID,
 				"to_account_id":   account3.ID,
 				"amount":          amount,
-				"currency": account3.Currency,
+				"currency":        account3.Currency,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user1.Username, time.Minute)
@@ -168,7 +168,7 @@ func TestCreateTransfer(t *testing.T) {
 				"from_account_id": account1.ID,
 				"to_account_id":   account3.ID,
 				"amount":          amount,
-				"currency": account1.Currency,
+				"currency":        account1.Currency,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user1.Username, time.Minute)
@@ -189,7 +189,7 @@ func TestCreateTransfer(t *testing.T) {
 				"from_account_id": account1.ID,
 				"to_account_id":   account2.ID,
 				"amount":          amount,
-				"currency": account1.Currency,
+				"currency":        account1.Currency,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user1.Username, time.Minute)
@@ -210,7 +210,7 @@ func TestCreateTransfer(t *testing.T) {
 				"from_account_id": account1.ID,
 				"to_account_id":   account2.ID,
 				"amount":          amount,
-				"currency": account1.Currency,
+				"currency":        account1.Currency,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user1.Username, time.Minute)
@@ -231,7 +231,7 @@ func TestCreateTransfer(t *testing.T) {
 				"from_account_id": account1.ID,
 				"to_account_id":   account2.ID,
 				"amount":          amount,
-				"currency": account1.Currency,
+				"currency":        account1.Currency,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user1.Username, time.Minute)
@@ -251,7 +251,7 @@ func TestCreateTransfer(t *testing.T) {
 				"from_account_id": account1.ID,
 				"to_account_id":   account2.ID,
 				"amount":          amount,
-				"currency": account1.Currency,
+				"currency":        account1.Currency,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user1.Username, time.Minute)
