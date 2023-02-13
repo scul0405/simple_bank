@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"embed"
+	"io/fs"
 	"log"
 	"net"
 	"net/http"
@@ -101,7 +102,8 @@ func runGatewayCServer(config util.Config, store db.Store) {
 	mux := http.NewServeMux()
 	mux.Handle("/", grpcMux)
 
-	mux.Handle("/swagger/", http.StripPrefix("/swagger/", http.FileServer(http.FS(content))))
+	subFS, _ := fs.Sub(content, "doc/swagger") 
+	mux.Handle("/swagger/", http.StripPrefix("/swagger/", http.FileServer(http.FS(subFS))))
 
 	listener, err := net.Listen("tcp", config.HTTPServerAddress)
 	if err != nil {
