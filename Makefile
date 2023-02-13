@@ -23,7 +23,7 @@ sqlc:
 	docker run --rm -v $(makeFileDir):/src -w /src kjconroy/sqlc generate
 
 maintest:
-	go test -timeout 30s github.com/techschool/simplebank/db/sqlc -run ^TestMain$
+	go test -timeout 30s github.com/scul0405/simple_bank/db/sqlc -run ^TestMain$
 
 test:
 	go test -v -cover ./...
@@ -32,7 +32,7 @@ server:
 	go run main.go
 
 mock:
-	mockgen -package mockdb -destination db/mock/store.go github.com/techschool/simplebank/db/sqlc Store
+	mockgen -package mockdb -destination db/mock/store.go github.com/scul0405/simple_bank/db/sqlc Store
 
 db_docs:
 	dbdocs build ./doc/db.dbml

@@ -7,11 +7,11 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/techschool/simplebank/token"
+	"github.com/scul0405/simple_bank/token"
 )
 
 const (
-	authorizationHeaderKey = "authorization"
+	authorizationHeaderKey  = "authorization"
 	authorizationTypeBearer = "bearer"
 	authorizationPayloadKey = "authorization_payload"
 )
@@ -26,7 +26,7 @@ func authMiddleware(tokenMaker token.Maker) gin.HandlerFunc {
 		}
 
 		fields := strings.Fields(authorizationHeader)
-		if len(fields) < 2 { // fields will take the form likes: "Bearer tokenString" -> len must at least 2 
+		if len(fields) < 2 { // fields will take the form likes: "Bearer tokenString" -> len must at least 2
 			err := errors.New("invalid header authorization format")
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err))
 			return

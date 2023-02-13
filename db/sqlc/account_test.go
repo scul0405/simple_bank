@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/scul0405/simple_bank/util"
 	"github.com/stretchr/testify/require"
-	"github.com/techschool/simplebank/util"
 )
 
 func createRandomAccount(t *testing.T) Account {
@@ -87,7 +87,7 @@ func TestListAccounts(t *testing.T) {
 	}
 
 	arg := ListAccountsParams{
-		Owner: lastAccount.Owner,
+		Owner:  lastAccount.Owner,
 		Limit:  5,
 		Offset: 0,
 	}

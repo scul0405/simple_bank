@@ -5,21 +5,21 @@ import (
 	"testing"
 	"time"
 
+	"github.com/scul0405/simple_bank/util"
 	"github.com/stretchr/testify/require"
-	"github.com/techschool/simplebank/util"
 )
 
-func createRandomUser(t *testing.T) User{
+func createRandomUser(t *testing.T) User {
 	password := util.RandomString(6)
 	hashedPassword, err := util.HashPassword(password)
 	require.NoError(t, err)
 	require.NotEmpty(t, hashedPassword)
 
-	arg := CreateUserParams {
-		Username: util.RandomOwner(),
+	arg := CreateUserParams{
+		Username:       util.RandomOwner(),
 		HashedPassword: hashedPassword,
-		FullName: util.RandomOwner(),
-		Email: util.RandomEmail(),
+		FullName:       util.RandomOwner(),
+		Email:          util.RandomEmail(),
 	}
 
 	user, err := testQueries.CreateUser(context.Background(), arg)
@@ -31,18 +31,17 @@ func createRandomUser(t *testing.T) User{
 	require.Equal(t, arg.FullName, user.FullName)
 	require.Equal(t, arg.Email, user.Email)
 
-
 	require.True(t, user.PasswordChangedAt.IsZero())
 	require.NotZero(t, user.CreateAt)
 
 	return user
 }
 
-func TestCreateUser(t *testing.T){
+func TestCreateUser(t *testing.T) {
 	createRandomUser(t)
 }
 
-func TestGetUser(t *testing.T){
+func TestGetUser(t *testing.T) {
 	user1 := createRandomUser(t)
 	user2, err := testQueries.GetUser(context.Background(), user1.Username)
 	require.NoError(t, err)

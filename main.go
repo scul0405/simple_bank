@@ -3,21 +3,25 @@ package main
 import (
 	"context"
 	"database/sql"
+	"embed"
 	"log"
 	"net"
 	"net/http"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	_ "github.com/lib/pq"
-	"github.com/techschool/simplebank/api"
-	db "github.com/techschool/simplebank/db/sqlc"
-	"github.com/techschool/simplebank/gapi"
-	"github.com/techschool/simplebank/pb"
-	"github.com/techschool/simplebank/util"
+	"github.com/scul0405/simple_bank/api"
+	db "github.com/scul0405/simple_bank/db/sqlc"
+	"github.com/scul0405/simple_bank/gapi"
+	"github.com/scul0405/simple_bank/pb"
+	"github.com/scul0405/simple_bank/util"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/protobuf/encoding/protojson"
 )
+
+//go:embed doc/swagger/*
+var content embed.FS
 
 func main() {
 	config, err := util.LoadConfig(".")
@@ -97,9 +101,7 @@ func runGatewayCServer(config util.Config, store db.Store) {
 	mux := http.NewServeMux()
 	mux.Handle("/", grpcMux)
 
-	// Create new file server to serve swagger
-	fs := http.FileServer(http.Dir("./doc/swagger"))
-	mux.Handle("/swagger/", http.StripPrefix("/swagger/", fs))
+	mux.Handle("/swagger/", http.StripPrefix("/swagger/", http.FileServer(http.FS(content))))
 
 	listener, err := net.Listen("tcp", config.HTTPServerAddress)
 	if err != nil {

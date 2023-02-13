@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/lib/pq"
-	db "github.com/techschool/simplebank/db/sqlc"
-	"github.com/techschool/simplebank/pb"
-	"github.com/techschool/simplebank/util"
+	db "github.com/scul0405/simple_bank/db/sqlc"
+	"github.com/scul0405/simple_bank/pb"
+	"github.com/scul0405/simple_bank/util"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

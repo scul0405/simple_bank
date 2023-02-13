@@ -13,11 +13,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
+	mockdb "github.com/scul0405/simple_bank/db/mock"
+	db "github.com/scul0405/simple_bank/db/sqlc"
+	"github.com/scul0405/simple_bank/token"
+	"github.com/scul0405/simple_bank/util"
 	"github.com/stretchr/testify/require"
-	mockdb "github.com/techschool/simplebank/db/mock"
-	db "github.com/techschool/simplebank/db/sqlc"
-	"github.com/techschool/simplebank/token"
-	"github.com/techschool/simplebank/util"
 )
 
 func TestGetAccountAPI(t *testing.T) {
@@ -238,7 +238,6 @@ func TestCreateAccountAPI(t *testing.T) {
 				require.Equal(t, http.StatusUnauthorized, recorder.Code)
 			},
 		},
-		
 	}
 
 	for i := range testCases {
@@ -270,31 +269,31 @@ func TestCreateAccountAPI(t *testing.T) {
 	}
 }
 
-func TestListAccounts(t *testing.T){
+func TestListAccounts(t *testing.T) {
 	n := 5
 	user, _ := randomUser(t)
 	accounts := make([]db.Account, n)
 
-	for i := 0; i < n;  i++ {
+	for i := 0; i < n; i++ {
 		accounts[i] = randomAccount(user.Username)
 	}
 
 	type Query struct {
-		page_id int
+		page_id   int
 		page_size int
 	}
 
-	testCases := []struct{
-		name string
-		query Query
-		setupAuth func(t *testing.T, request *http.Request, tokenMaker token.Maker)
-		buildStub func(store *mockdb.MockStore)
+	testCases := []struct {
+		name          string
+		query         Query
+		setupAuth     func(t *testing.T, request *http.Request, tokenMaker token.Maker)
+		buildStub     func(store *mockdb.MockStore)
 		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
-	} {
+	}{
 		{
 			name: "OK",
 			query: Query{
-				page_id: 1,
+				page_id:   1,
 				page_size: n,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
@@ -302,8 +301,8 @@ func TestListAccounts(t *testing.T){
 			},
 			buildStub: func(store *mockdb.MockStore) {
 				arg := db.ListAccountsParams{
-					Owner: user.Username,
-					Limit: int32(n),
+					Owner:  user.Username,
+					Limit:  int32(n),
 					Offset: 0,
 				}
 				store.EXPECT().ListAccounts(gomock.Any(), gomock.Eq(arg)).Times(1).Return(accounts, nil)
@@ -316,7 +315,7 @@ func TestListAccounts(t *testing.T){
 		{
 			name: "InvalidPageID",
 			query: Query{
-				page_id: -1,
+				page_id:   -1,
 				page_size: n,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
@@ -332,7 +331,7 @@ func TestListAccounts(t *testing.T){
 		{
 			name: "InvalidPageSize",
 			query: Query{
-				page_id: 1,
+				page_id:   1,
 				page_size: -n,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
@@ -348,7 +347,7 @@ func TestListAccounts(t *testing.T){
 		{
 			name: "InternalError",
 			query: Query{
-				page_id: 1,
+				page_id:   1,
 				page_size: n,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
@@ -364,7 +363,7 @@ func TestListAccounts(t *testing.T){
 		{
 			name: "NoAuthorization",
 			query: Query{
-				page_id: 1,
+				page_id:   1,
 				page_size: n,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
@@ -402,7 +401,7 @@ func TestListAccounts(t *testing.T){
 			request.URL.RawQuery = query.Encode()
 
 			tc.setupAuth(t, request, server.tokenMaker)
-			
+
 			server.router.ServeHTTP(recorder, request)
 
 			tc.checkResponse(t, recorder)
