@@ -80,11 +80,6 @@ make test
 
 ## Setup infrastructure
 
-- Create the bank-network
-    ``` bash
-    make network
-    ```
-
 - Start postgres container:
     ```bash
     make postgres
