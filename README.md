@@ -117,12 +117,21 @@ make test
 
 ## Documentation
 
+#### Database
 - Generate DB documentation:
     ```bash
     make db_docs
     ```
 
 - Access the DB documentation at [this address](https://dbdocs.io/vldtruong1221/Simple_bank). Password: `secret`
+
+#### Swagger (API Documentation)
+- Run server:
+    ```bash
+    make server
+    ```
+
+- Go to [http://localhost:3000/swagger](http://localhost:3000/swagger) to view API documentation
 
 ## How to generate code
 
