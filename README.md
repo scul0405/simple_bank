@@ -25,7 +25,8 @@ cd simple_bank
 #### Using with docker compose
 
 Run this command:
-``compose up
+```sh
+docker compose up
 ```
 #### Using by default
 
