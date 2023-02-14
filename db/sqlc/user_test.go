@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"testing"
 	"time"
 
@@ -53,4 +54,82 @@ func TestGetUser(t *testing.T) {
 	require.Equal(t, user1.Email, user2.Email)
 	require.WithinDuration(t, user1.PasswordChangedAt, user2.PasswordChangedAt, time.Second)
 	require.WithinDuration(t, user1.CreateAt, user2.CreateAt, time.Second)
+}
+
+func TestUpdateUser(t *testing.T){
+	user := createRandomUser(t)
+
+	testcases := []struct{
+		name string
+		runTest func(t *testing.T)
+	}{
+		{
+			name: "Update only full name",
+			runTest: func(t *testing.T) {
+				newFullName := util.RandomOwner()
+				arg := UpdateUserParams{
+					Username: user.Username,
+					FullName: sql.NullString{
+						String: newFullName,
+						Valid: true,
+					},
+				}
+
+				newUser, err := testQueries.UpdateUser(context.Background(), arg)
+				require.NoError(t, err)
+				require.Equal(t, newUser.Username, user.Username)
+				require.Equal(t, newUser.FullName, newFullName)
+				require.Equal(t, newUser.Email, user.Email)
+			},
+		},
+		{
+			name: "Update only email",
+			runTest: func(t *testing.T) {
+				newEmail := util.RandomEmail()
+				arg := UpdateUserParams{
+					Username: user.Username,
+					Email: sql.NullString{
+						String: newEmail,
+						Valid: true,
+					},
+				}
+
+				newUser, err := testQueries.UpdateUser(context.Background(), arg)
+				require.NoError(t, err)
+				require.Equal(t, newUser.Username, user.Username)
+				require.Equal(t, newUser.FullName, newUser.FullName)
+				require.Equal(t, newUser.Email, newEmail)
+			},
+		},
+		{
+			name: "Update all fields",
+			runTest: func(t *testing.T) {
+				newFullName := util.RandomOwner()
+				newEmail := util.RandomEmail()
+				arg := UpdateUserParams{
+					Username: user.Username,
+					FullName: sql.NullString{
+						String: newFullName,
+						Valid: true,
+					},
+					Email: sql.NullString{
+						String: newEmail,
+						Valid: true,
+					},
+				}
+
+				newUser, err := testQueries.UpdateUser(context.Background(), arg)
+				require.NoError(t, err)
+				require.Equal(t, newUser.Username, user.Username)
+				require.Equal(t, newUser.FullName, newFullName)
+				require.Equal(t, newUser.Email, newEmail)
+			},
+		},
+	}
+
+	for i := range testcases {
+		tc := testcases[i]
+
+		tc.runTest(t)
+	}
 }
